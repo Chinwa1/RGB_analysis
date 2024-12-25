@@ -1,0 +1,935 @@
+---
+title: "Rust yield ANOVA error bar"
+author: "Chinwa"
+date: "2024-06-13"
+output: html_document
+---
+####read the data
+
+```{r}
+setwd("C:/Users/hchin/OneDrive/Atlantic Beach/Documents/PhD/DPhil/DPhil/RGB for indirect selection/GLASSHOUSE FINAL EXPERIMENTS")
+```
+
+```{r}
+
+```
+
+```{r}
+attach(GRV)
+```
+
+```{r}
+library(ggplot2)
+library(agricolae)
+library(dplyr)
+library(patchwork)
+```
+```{r}
+attach(GRV)
+```
+
+```{r}
+GRV$Genotypes=as.factor(GRV$Genotypes)
+GRV$Replication=as.factor(GRV$Replication)
+GRV$Group=as.factor(GRV$Group)
+```
+
+####Pod incubation period####
+```{r}
+value_max=GRV %>% group_by(Genotypes) %>% summarize(max_value=max(Incubation))
+hsd=HSD.test(aov(Incubation~Genotypes+Replication,data=GRV),trt="Genotypes",group = T)
+sig.letters=hsd$groups[order(row.names(hsd$groups)),]
+```
+
+```{r}
+GRVinc=ggplot(data=GRV,aes(reorder(x=Genotypes,-Incubation),y=Incubation))+
+  geom_boxplot(aes(fill=Genotypes))+
+                 geom_text(data=value_max,aes(x=Genotypes,y=0.+
+                                                            max_value,label=sig.letters$groups),vjust=0)+stat_boxplot(width=0.1)+ggtitle("")+xlab("")+ylab("Incubation period (days)")+theme_classic()+
+  theme(axis.text.x = element_text(angle = 90,size = 10))+
+  theme(axis.text.y = element_text(angle = 0,size = 15))+
+  theme(axis.title.x = element_text(size = 15))+
+  theme(axis.title.y = element_text(size = 15))+
+  theme(legend.position = "none")
+```
+
+```{r}
+GRVinc
+```
+
+####pod yield#####
+
+```{r}
+value_max=GRV %>% group_by(Genotypes) %>% summarize(max_value=max(GRV$Pod_yield))
+hsd=HSD.test(aov(GRV$Pod_yield~Genotypes+Replication,data=GRV),trt="Genotypes",group = T)
+sig.letters=hsd$groups[order(row.names(hsd$groups)),]
+```
+
+```{r}
+GRVyld=ggplot(data=GRV,aes(reorder(x=Genotypes,-Pod_yield),y=Pod_yield))+
+  geom_boxplot(aes(fill=Genotypes))+
+                 geom_text(data=value_max,aes(x=Genotypes,y=0.5+
+                                                            max_value,label=sig.letters$groups),vjust=0)+stat_boxplot(width=0.1
+                                                                                                                      )+ggtitle("")+xlab("")+ylab("Pod yield (g/plant)")+theme_classic()+
+  theme(axis.text.x = element_text(angle = 90,size = 10))+
+  theme(axis.text.y = element_text(angle = 0,size = 15))+
+  theme(axis.title.y = element_text(size = 15))+
+  theme(axis.title.x = element_text(size = 10))+
+  theme(legend.position = "none")
+```
+
+```{r}
+GRVyld
+```
+
+
+####T file data####
+
+```{r}
+attach(GRV_T)
+```
+###subste the data growth stage 2
+```{r}
+##GRVT2=subset(GRV_T,Growth_stage=="R5",select = 1:18)
+```
+
+```{r}
+##GRVT2
+```
+
+```{r}
+GRV_T$Replication=as.factor(GRV_T$Rep)
+GRV_T$Group=as.factor(GRV_T$Group)
+GRV_T$Genotypes=as.factor(GRV_T$Genotype)
+```
+
+```{r}
+value_max=GRV_T %>% group_by(Genotypes) %>% summarize(max_value=max(Severity))
+hsd=HSD.test(aov(Severity~Genotypes+Replication,data=GRV_T),trt="Genotypes",group = T)
+sig.letters=hsd$groups[order(row.names(hsd$groups)),] 
+```
+
+```{r}
+GRVsev=ggplot(data=GRV_T,aes(x=reorder(Genotypes,-Severity),y=Severity))+
+  geom_boxplot(aes(fill=Genotypes))+
+                 geom_text(data=value_max,aes(x=Genotypes,y=0.1+
+                                                            max_value,label=sig.letters$groups),vjust=0)+stat_boxplot(width=0.1)+ggtitle("")+xlab("")+ylab("GRV severity (%)")+
+  theme_classic()+
+  theme(axis.text.x = element_text(angle = 90,size = 10))+
+  theme(axis.text.y = element_text(angle = 0,size = 15))+
+  theme(axis.title.y = element_text(size = 15))+
+  theme(axis.title.x = element_text(size = 10))+
+  theme(legend.position = "none")
+```
+
+```{r}
+GRVsev
+```
+
+```{r}
+value_max=GRV_T %>% group_by(Genotypes) %>% summarize(max_value=max(GGA))
+hsd=HSD.test(aov(GGA~Genotypes+Replication,data=GRV_T),trt="Genotypes",group = T)
+sig.letters=hsd$groups[order(row.names(hsd$groups)),]
+```
+
+```{r}
+GRVGGA=ggplot(data=GRV_T,aes(reorder(x=Genotypes,-GGA),y=GGA))+
+  geom_boxplot(aes(fill=Genotypes))+
+                 geom_text(data=value_max,aes(x=Genotypes,y=0.1+
+                                                            max_value,label=sig.letters$groups),vjust=0)+stat_boxplot(width=0.1)+ggtitle("")+xlab("")+ylab("GGA")+theme_classic()+
+  theme(axis.text.x = element_text(angle = 90,size = 10))+
+  theme(axis.text.y = element_text(angle = 0,size = 15))+
+  theme(axis.title.y = element_text(size = 15))+
+  theme(axis.title.x = element_text(size = 10))+
+  theme(legend.position = "none")
+```
+
+```{r}
+GRVGGA
+```
+
+```{r}
+value_max=GRV_T %>% group_by(Genotypes) %>% summarize(max_value=max(GA))
+hsd=HSD.test(aov(GA~Genotypes+Replication,data=GRV_T),trt="Genotypes",group = T)
+sig.letters=hsd$groups[order(row.names(hsd$groups)),]
+```
+
+```{r}
+GRVGA=ggplot(data=GRV_T,aes(reorder(x=Genotypes,-GA),y=GA))+
+  geom_boxplot(aes(fill=Genotypes))+
+                 geom_text(data=value_max,aes(x=Genotypes,y=0.1+
+                                                            max_value,label=sig.letters$groups),vjust=0)+stat_boxplot(width=0.1)+ggtitle("")+xlab("")+ylab("GA")+theme_classic()+
+  theme(axis.text.x = element_text(angle = 90,size = 10))+
+  theme(axis.text.y = element_text(angle = 0,size = 15))+
+  theme(axis.title.y = element_text(size = 15))+
+  theme(axis.title.x = element_text(size = 10))+
+  theme(legend.position = "none")
+```
+
+```{r}
+GRVGA
+```
+
+```{r}
+value_max=GRV_T %>% group_by(Genotypes) %>% summarize(max_value=max(a.))
+hsd=HSD.test(aov(a.~Genotypes+Replication,data=GRV_T),trt="Genotypes",group = T)
+sig.letters=hsd$groups[order(row.names(hsd$groups)),]
+```
+
+```{r}
+GRVa=ggplot(data=GRV_T,aes(reorder(x=Genotypes,-a.),y=a.))+
+  geom_boxplot(aes(fill=Genotypes))+
+                 geom_text(data=value_max,aes(x=Genotypes,y=0.1+
+                                                            max_value,label=sig.letters$groups),vjust=0)+stat_boxplot(width=0.1)+ggtitle("")+xlab("")+ylab("a*")+theme_classic()+
+  theme(axis.text.x = element_text(angle = 90,size = 10))+
+  theme(axis.text.y = element_text(angle = 0,size = 15))+
+  theme(axis.title.y = element_text(size = 15))+
+  theme(axis.title.x = element_text(size = 10))+ylim(-28,2)+
+  theme(legend.position = "none")
+```
+
+```{r}
+GRVa
+```
+
+```{r}
+value_max=GRV_T %>% group_by(Genotypes) %>% summarize(max_value=max(CSI))
+hsd=HSD.test(aov(CSI~Genotypes+Replication,data=GRV_T),trt="Genotypes",group = T)
+sig.letters=hsd$groups[order(row.names(hsd$groups)),]
+```
+
+```{r}
+GRVCSI=ggplot(data=GRV_T,aes(reorder(x=Genotypes,-CSI),y=CSI))+
+  geom_boxplot(aes(fill=Genotypes))+
+                 geom_text(data=value_max,aes(x=Genotypes,y=0.1+
+                                                            max_value,label=sig.letters$groups),vjust=0)+stat_boxplot(width=0.1)+ggtitle("")+xlab("")+ylab("CSI")+theme_classic()+
+  theme(axis.text.x = element_text(angle = 90,size = 10))+
+  theme(axis.text.y = element_text(angle = 0,size = 15))+
+  theme(axis.title.y = element_text(size = 15))+
+  theme(axis.title.x = element_text(size = 10))+
+  theme(legend.position = "none")
+```
+
+```{r}
+GRVCSI
+```
+
+########################leafspots########################################
+
+```{r}
+LSP=read.csv("C:/Users/hchin/OneDrive/Atlantic Beach/Documents/PhD/DPhil/DPhil/RGB for indirect selection/GLASSHOUSE FINAL EXPERIMENTS/leafspot_yield.csv")
+```
+
+```{r}
+attach(LSP)
+```
+
+```{r}
+LSP$Genotype=as.factor(LSP$Genotype)
+LSP$Genotype=as.factor(LSP$Genotype)
+LSP$Replication=as.factor(LSP$Replication)
+LSP$Group=as.factor(LSP$Group)
+```
+
+```{r}
+library(agricolae)
+```
+
+```{r}
+attach(LSP)
+```
+
+```{r}
+model<-aov(Pod_yield~Genotype, data=LSP)
+out <- LSD.test(model,"Genotype", group=TRUE,console=TRUE,
+main="fun")
+```
+
+#stargraph
+# Variation range: max and min
+
+```{r}
+plot(out)
+```
+#endgraph
+
+```{r}
+value_max2=LSP %>% group_by(Genotype) %>% summarize(max_value2=max(Pod_yield))
+hsd=LSD.test(aov(Pod_yield~Genotype,data=LSP),trt="Genotype",group = T)
+sig.letters=hsd$groups[order(row.names(hsd$groups)),]
+```
+
+```{r}
+LSPyld=ggplot(data=LSP,aes(reorder(x=Genotype,-Pod_yield),y=Pod_yield))+
+  geom_boxplot(aes(fill=Genotypes))+
+                 geom_text(data=value_max2,aes(x=Genotype,y=0.1+
+                                                            max_value2,label=sig.letters$groups),vjust=0)+stat_boxplot(width=0.1)+ggtitle("")+xlab("")+ylab("Pod yield (g/plant)")+theme_classic()+
+  theme(axis.text.x = element_text(angle = 90,size = 10))+
+theme(axis.text.y = element_text(angle = 0,size = 15))+  
+  theme(axis.title.x = element_text(size = 10))+
+  theme(axis.title.x = element_text(size = 10))+
+  theme(axis.title.y = element_text(size = 15))+
+  theme(legend.position = "none")
+```
+
+```{r}
+LSPyld
+```
+############Incubation period#############################
+
+```{r}
+value_max2=LSP %>% group_by(Genotype) %>% summarize(max_value2=max(Incubation))
+hsd=LSD.test(aov(Incubation~Genotype+Replication,data=LSP),trt="Genotype",group = T)
+sig.letters=hsd$groups[order(row.names(hsd$groups)),]
+```
+
+```{r}
+LSPinc=ggplot(data=LSP,aes(reorder(x=Genotype,-Incubation),y=Incubation))+
+  geom_boxplot(aes(fill=Genotype))+
+                 geom_text(data=value_max2,aes(x=Genotype,y=0.3+
+                                                            max_value2,label=sig.letters$groups),vjust=0)+stat_boxplot(width=0.1)+ggtitle("")+xlab("")+ylab("Incubation period (days)")+theme_classic()+
+  theme(axis.text.x = element_text(angle = 90,size = 10))+
+  theme(axis.text.y = element_text(angle = 0,size = 15))+
+  theme(axis.title.x = element_text(size = 10))+
+  theme(axis.title.y = element_text(size = 15))+
+  theme(legend.position = "none")
+```
+
+```{r}
+LSPinc
+```
+
+```{r}
+attach(LSPot)
+```
+```{r}
+LSPot$Stage=as.factor(LSPot$Stage)
+LSPot$Replication=as.factor(LSPot$Replication)
+LSPot$Groups=as.factor(LSPot$Groups)
+LSPot$Genotypes=as.factor(LSPot$Genotypes)
+```
+
+```{r}
+value_max2=LSPot %>% group_by(Genotypes) %>% summarize(max_value2=max(GGA))
+hsd=LSD.test(aov(GGA~Genotypes+Replication,data=LSPot),trt="Genotypes",group = T)
+sig.letters=hsd$groups[order(row.names(hsd$groups)),]
+```
+
+```{r}
+LSPotGGA=ggplot(data=LSPot,aes(reorder(x=Genotypes,-GGA),y=GGA))+
+  geom_boxplot(aes(fill=Genotypes))+
+                 geom_text(data=value_max2,aes(x=Genotypes,y=0.1+
+                                                            max_value2,label=sig.letters$groups),vjust=0)+stat_boxplot(width=0.1)+ggtitle("")+xlab("")+ylab("GGA")+theme_classic()+
+  theme(axis.text.x = element_text(angle = 90,size = 10))+
+theme(axis.text.y = element_text(angle = 0,size = 15))+
+  theme(axis.title.x = element_text(size = 15))+
+  theme(axis.title.y = element_text(size = 15))+
+  theme(legend.position = "none")
+```
+
+#####Severity score###################
+
+```{r}
+LSPT=read.csv("C:/Users/hchin/OneDrive/Atlantic Beach/Documents/PhD/DPhil/DPhil/RGB for indirect selection/GLASSHOUSE FINAL EXPERIMENTS/leafspot.csv")
+```
+
+```{r}
+attach(LSPT)
+```
+```{r}
+LSPT$Genotype=as.factor(LSPT$Genotype)
+LSPT$Replication=as.factor(LSPT$Replication)
+```
+
+```{r}
+value_max2=LSPT %>% group_by(Genotype) %>% summarize(max_value2=max(GA))
+hsd=LSD.test(aov(GA~Genotype,data=LSPT),trt="Genotype",group = T)
+sig.letters=hsd$groups[order(row.names(hsd$groups)),]
+```
+
+```{r}
+LSPT1=ggplot(data=LSPT,aes(reorder(x=Genotype,-GA),y=GA))+
+  geom_boxplot(aes(fill=Genotype))+
+                 geom_text(data=value_max2,aes(x=Genotype,y=0+
+                                                            max_value2,label=sig.letters$groups),vjust=0)+stat_boxplot(width=0.1)+ggtitle("")+xlab("")+ylab("GA)")+theme_classic()+
+  theme(axis.text.x = element_text(angle = 90,size = 10))+
+  theme(axis.text.y = element_text(angle = 0,size = 15))+
+  theme(axis.title.x = element_text(size = 15))+
+  theme(axis.title.y = element_text(size = 15))+
+  theme(legend.position = "none")
+```
+
+```{r}
+LSPT1
+```
+
+
+###########################R7###############################################
+
+
+#####################GGA###################################################
+
+```{r}
+R7=read.csv("C:/Users/hchin/OneDrive/Atlantic Beach/Documents/PhD/DPhil/DPhil/RGB for indirect selection/GLASSHOUSE FINAL EXPERIMENTS/R7.csv")
+```
+
+```{r}
+model<-aov(v.~Genotype, data=R7)
+out <- LSD.test(model,"Genotype", group=TRUE,console=TRUE,
+main="fun")
+```
+```{r}
+attach(R7)
+```
+
+```{r}
+R7$Genotype=as.factor(R7$Genotype)
+R7$Replication=as.factor(R7$Replication)
+```
+
+```{r}
+str(R7)
+```
+
+```{r}
+value_maxR7=R7 %>% group_by(Genotype) %>% summarize(max_value2=max(CSI))
+hsd=LSD.test(aov(CSI~Genotype,data=R7),trt="Genotype",group = T)
+sig.letters=hsd$groups[order(row.names(hsd$groups)),]
+```
+
+```{r}
+R7GGC=ggplot(data=R7,aes(reorder(x=Genotype,-CSI),y=CSI))+
+  geom_boxplot(aes(fill=Genotype))+
+                 geom_text(data=value_maxR7,aes(x=Genotype,y=0.1+
+                                                            max_value2,label=sig.letters$groups),vjust=0)+stat_boxplot(width=0.1)+ggtitle("")+xlab("Genotype")+ylab("CSI (%)")+theme_classic()+
+  theme(axis.text.x = element_text(angle = 90,size = 10))+
+theme(axis.text.y = element_text(angle = 0,size = 15))+
+  theme(axis.title.x = element_text(size = 15))+
+  theme(axis.title.y = element_text(size = 15))+
+  theme(legend.position = "none")
+```
+
+```{r}
+R7GGC
+```
+
+
+
+
+
+```{r}
+value_max2=LSPT %>% group_by(Genotype) %>% summarize(max_value2=max(v.))
+hsd=HSD.test(aov(v.~Genotype+Replication,data=LSPT),trt="Genotype",group = T)
+sig.letters=hsd$groups[order(row.names(hsd$groups)),]
+```
+
+```{r}
+LSPTGA=ggplot(data=LSPT,aes(reorder(x=Genotype,-v.),y=v.))+
+  geom_boxplot(aes(fill=Genotype))+
+                 geom_text(data=value_max2,aes(x=Genotype,y=0.1+
+                                                            max_value2,label=sig.letters$groups),vjust=0)+stat_boxplot(width=0.1)+ggtitle("")+xlab("")+ylab("GA")+theme_classic()+
+  theme(axis.text.x = element_text(angle = 90,size = 10))+
+theme(axis.text.y = element_text(angle = 0,size = 15))+
+  theme(axis.title.x = element_text(size = 10))+
+  theme(axis.title.y = element_text(size = 15))+
+  theme(legend.position = "none")
+```
+
+```{r}
+LSPTGA
+```
+
+############################a.################################
+```{r}
+value_max2=LSPot %>% group_by(Genotypes) %>% summarize(max_value2=max(a.))
+hsd=HSD.test(aov(a.~Genotypes+Replication,data=LSPot),trt="Genotypes",group = T)
+sig.letters=hsd$groups[order(row.names(hsd$groups)),]
+```
+
+```{r}
+LSPota.=ggplot(data=LSPot,aes(reorder(x=Genotypes,-a.),y=a.))+
+  geom_boxplot(aes(fill=Genotypes))+
+                 geom_text(data=value_max2,aes(x=Genotypes,y=0.1+
+                                                            max_value2,label=sig.letters$groups),vjust=0)+stat_boxplot(width=0.1)+ggtitle("")+xlab("")+ylab("a*")+theme_classic()+
+  theme(axis.text.x = element_text(angle = 90,size = 10))+
+theme(axis.text.y = element_text(angle = 0,size = 10))+
+  theme(axis.title.x = element_text(size = 10))+
+  theme(axis.title.y = element_text(size = 15))+
+  theme(legend.position = "none")
+```
+
+```{r}
+LSPota.
+```
+
+```{r}
+value_max2=LSPot %>% group_by(Genotypes) %>% summarize(max_value2=max(CSI))
+hsd=HSD.test(aov(CSI~Genotypes+Replication,data=LSPot),trt="Genotypes",group = T)
+sig.letters=hsd$groups[order(row.names(hsd$groups)),]
+```
+
+```{r}
+LSPotCSI=ggplot(data=LSPot,aes(reorder(x=Genotypes,-CSI),y=CSI))+
+  geom_boxplot(aes(fill=Genotypes))+
+                 geom_text(data=value_max2,aes(x=Genotypes,y=0.1+
+                                                            max_value2,label=sig.letters$groups),vjust=0)+stat_boxplot(width=0.1)+ggtitle("")+xlab("")+ylab("CSI")+theme_classic()+
+  theme(axis.text.x = element_text(angle = 90,size = 10))+
+theme(axis.text.y = element_text(angle = 0,size = 15))+
+  theme(axis.title.x = element_text(size = 10))+
+  theme(axis.title.y = element_text(size = 15))+
+  theme(legend.position = "none")
+```
+
+```{r}
+LSPotCSI
+```
+```{r}
+library(patchwork)
+library(ggpubr)
+library(gridExtra)
+```
+
+```{r}
+ggsave("LSPotCSI.JPG",width =8,height = 10,dpi = 300 )
+```
+
+####correlation analysis and heatmaps
+read the data
+
+```{r}
+R1=read.csv("C:/Users/hchin/OneDrive/Atlantic Beach/Documents/PhD/DPhil/DPhil/RGB for indirect selection/GLASSHOUSE FINAL EXPERIMENTS/R1_means.csv")
+attach(R1)
+```
+
+```{r}
+library(pheatmap)
+library(corrplot)
+library(correlation)
+library(RColorBrewer)
+####BiocManager::install("ComplexHeatmap")
+library(ComplexHeatmap)
+```
+
+```{r}
+correlR1<-correlation(R1[,2:13],method="pearson")
+```
+
+```{r}
+write.csv(correlR1,"Correlation coefficients for T File R1 variables.csv")
+```
+
+```{r}
+corrR1=read.csv("C:/Users/hchin/OneDrive/Atlantic Beach/Documents/PhD/DPhil/DPhil/RGB for indirect selection/GLASSHOUSE FINAL EXPERIMENTS/Correlation coefficients for T File R1 variables.csv",row.names = "Trait")
+attach(corrR1)
+```
+
+```{r}
+heat_plotR2=as.matrix(corrR1)
+```
+
+```{r}
+P1 <-ComplexHeatmap::pheatmap(heat_plotR2, 
+                      col = brewer.pal(10, 'RdYlGn'), # choose a colour scale for your data
+                      cluster_rows = T, cluster_cols = T, # set to FALSE if you want to remove the dendograms
+                      clustering_distance_cols = 'euclidean',
+                      clustering_distance_rows = 'euclidean',
+                      clustering_method = 'ward.D',
+show_colnames = T, show_rownames = T,
+display_numbers = TRUE,
+         number_color = "black", 
+         fontsize_number = 6,#
+# displaying column and row names
+                      main = "R1",
+heatmap_legend_param = list(
+        title = "Correlation", 
+        at = c(-1, 0, 1), 
+        labels = c("Negative", "zero", " Positive")))# a title for our heatmap
+P1
+```
+
+```{r}
+## Showing rows and columns
+pheatmap(corrR1,
+         main = "R1",
+         
+         show_colnames = T, show_rownames = T,
+         number_color = "yellow", 
+         fontsize_number = 8)
+```
+
+```{r}
+## Showing values
+pheatmap(corrR1,
+         fontsize_col = 10,
+         fontsize_row = 10,
+         display_numbers = TRUE,
+         number_color = "black", 
+         fontsize_number = 6,#
+         border_color = "black") # default is grey60
+```
+
+```{r}
+R4=read.csv("C:/Users/hchin/OneDrive/Atlantic Beach/Documents/PhD/DPhil/DPhil/RGB for indirect selection/GLASSHOUSE FINAL EXPERIMENTS/R4_means.csv")
+attach(R4)
+```
+
+```{r}
+correlR4<-correlation(R4[,2:13],method="pearson")
+```
+
+```{r}
+write.csv(correlR4,"Correlation coefficient R4.csv")
+```
+
+```{r}
+corrR4=read.csv("C:/Users/hchin/OneDrive/Atlantic Beach/Documents/PhD/DPhil/DPhil/RGB for indirect selection/GLASSHOUSE FINAL EXPERIMENTS/Correlation coefficient R4.csv",row.names = "Trait")
+corrR4=as.matrix(corrR4)
+```
+
+```{r}
+P2 <- ComplexHeatmap::pheatmap(corrR4, 
+                      col = brewer.pal(10, 'RdYlGn'), # choose a colour scale for your data
+                      cluster_rows = T, cluster_cols = T, # set to FALSE if you want to remove the dendograms
+                      clustering_distance_cols = 'euclidean',
+                      clustering_distance_rows = 'euclidean',
+                      clustering_method = 'ward.D',
+show_colnames = T, show_rownames = T,
+display_numbers = TRUE,
+         number_color = "black", 
+         fontsize_number = 6,#
+# displaying column and row names
+                      main = "R4",
+heatmap_legend_param = list(
+        title = "Correlation", 
+        at = c(-1, 0, 1), 
+        labels = c("Negative", "zero", " Positive"))) # a title for our heatmap
+P2
+```
+
+```{r}
+## Showing rows and columns
+pheatmap(corrR4,
+         main = "Overall",
+         show_colnames = T, show_rownames = T,
+         number_color = "yellow", 
+         fontsize_number = 8)
+```
+
+```{r}
+## Showing values
+pheatmap(corrR4,
+         fontsize_col = 10,
+         fontsize_row = 10,
+         display_numbers = TRUE,
+         number_color = "black", 
+         fontsize_number = 6,#
+         border_color = "black") # default is grey60
+```
+##############R3#################################################33
+```{r}
+R7=read.csv("C:/Users/hchin/OneDrive/Atlantic Beach/Documents/PhD/DPhil/DPhil/RGB for indirect selection/GLASSHOUSE FINAL EXPERIMENTS/R7_means.csv")
+attach(R7)
+```
+
+```{r}
+correlR7<-correlation(R7[,2:13],method="pearson")
+```
+
+```{r}
+write.csv(correlR7,"Correlation coefficients of R7.csv")
+```
+
+```{r}
+corrR7=read.csv("C:/Users/hchin/OneDrive/Atlantic Beach/Documents/PhD/DPhil/DPhil/RGB for indirect selection/GLASSHOUSE FINAL EXPERIMENTS/Correlation coefficients of R7.csv",row.names = "Trait")
+attach(corrR7)
+corrR7=as.matrix(corrR7)
+```
+
+```{r}
+P3 <- pheatmap(corrR7, 
+                      col = brewer.pal(10, 'RdYlGn'), # choose a colour scale for your data
+                      cluster_rows = T, cluster_cols = T, # set to FALSE if you want to remove the dendograms
+                      clustering_distance_cols = 'euclidean',
+                      clustering_distance_rows = 'euclidean',
+                      clustering_method = 'ward.D',
+display_numbers = TRUE,
+         number_color = "black", 
+         fontsize_number = 6,#
+# displaying column and row names
+                      main = "R7",
+heatmap_legend_param = list(
+        title = "Correlation", 
+        at = c(-1, 0, 1), 
+        labels = c("Negative", "zero", " Positive"))) # a title for our heatmap
+P3
+```
+#############Overal################################
+```{r}
+Rall=read.csv("E:/Field trials/Groundnut/data/Field trial data final/means_A_file_all.csv")
+attach(Rall)
+```
+
+```{r}
+correlRall<-correlation(Rall[,2:22],method="pearson")
+```
+
+```{r}
+write.csv(correlRall,"Correlation coefficients of Rall.csv")
+```
+
+```{r}
+corrRall=read.csv("E:/Field trials/Groundnut/data/Field trial data final/Correlation coefficients of Rall.csv",row.names = "Trait")
+attach(corrRall)
+corrRall=as.matrix(corrRall)
+```
+
+```{r}
+P4 <- pheatmap(corrRall, 
+                      col = brewer.pal(10, 'RdYlGn'), # choose a colour scale for your data
+                      cluster_rows = T, cluster_cols = T, # set to FALSE if you want to remove the dendograms
+                      clustering_distance_cols = 'euclidean',
+                      clustering_distance_rows = 'euclidean',
+                      clustering_method = 'ward.D',
+show_colnames = TRUE, show_rownames = TRUE,
+display_numbers = TRUE,
+         number_color = "black", 
+         fontsize_number = 6,#
+# displaying column and row names
+                      main = "Overall",
+heatmap_legend_param = list(
+        title = "Correlation", 
+        at = c(-1, 0, 1), 
+        labels = c("Negative", "zero", " Positive"))) # a title for our heatmap
+P4
+```
+```{r}
+library(patchwork)
+library(cowplot)
+```
+
+#######principal component analysis###############################
+
+
+```{r}
+means=read.csv("C:/Users/hchin/OneDrive/Atlantic Beach/Documents/PhD/DPhil/DPhil/RGB for indirect selection/GLASSHOUSE FINAL EXPERIMENTS/A_file_all.csv",header = T)
+attach(means)
+```
+
+```{r}
+means$Genotype=as.factor(means$Genotype)
+```
+
+```{r}
+library(FactoMineR)
+library(factoextra)
+library(ggplot2)
+library(ggpubr)
+```
+
+```{r}
+df=means[,-1]
+row.names(df)=as.factor(`Genotype`)
+```
+
+```{r}
+View(df)
+```
+
+```{r}
+res.PCA <- PCA(df, graph = TRUE)
+```
+
+```{r}
+print(res.PCA)
+```
+
+```{r}
+eig.val <- get_eigenvalue(res.PCA)
+```
+
+```{r}
+eig.val
+```
+
+```{r}
+head(eig.val)
+```
+
+```{r}
+eig.val=as.data.frame(eig.val)
+```
+
+```{r}
+eigenvals=write.csv(eig.val,"Eigen values for the treatments.csv")
+```
+
+```{r}
+write_xls(eig.val,"Eigen values for the parameters.xlsx")
+```
+
+```{r}
+fviz_screeplot(res.PCA)
+```
+
+```{r}
+var <- get_pca_var(res.PCA)
+```
+
+```{r}
+var$coord
+var$cor
+var$contrib
+```
+
+```{r}
+var$coord=as.data.frame(var$coord)
+```
+
+```{r}
+var$cor=as.data.frame(var$cor)
+```
+
+```{r}
+var$contrib=as.data.frame(var$contrib)
+```
+
+```{r}
+write_xlsx(var$coord,"Coordinates for the parameters.xlsx")
+```
+
+```{r}
+write_xlsx(var$cor,"correlations of the parameters .xlsx")
+```
+
+```{r}
+write_xlsx(var$contrib,"contribution variances for the parameters.xlsx")
+```
+
+```{r}
+write.table(var$coord,"Coord of variables.xls", row.names=TRUE, sep="\t")
+```
+
+```{r}
+write.table(var$cor,"Correlation_variables_dimensions.xls", row.names=TRUE, sep="\t")
+```
+
+```{r}
+write.table(var$contrib,"Contribution_variables.xls", row.names=TRUE, sep="\t")
+```
+
+# Plot of variables
+```{r}
+fviz_pca_var(res.PCA, repel = TRUE)
+```
+# Contribution to the first dimension
+```{r}
+a1=fviz_contrib(res.PCA, "var", axes = 1)
+a1
+```
+# Contribution to the second dimension
+```{r}
+b=fviz_contrib(res.PCA, "var", axes = 2)
+b
+```
+
+```{r}
+c=fviz_contrib(res.PCA, "var", axes = 2)
+c
+```
+
+```{r}
+ggarrange(a1,b,c,ncol=1,nrow = 2)
+```
+
+# Compute hierarchical clustering on principal components
+```{r}
+res.hcpc <- HCPC(res.PCA, graph = FALSE)
+res.hcpc
+```
+
+```{r}
+varA=fviz_pca_var(res.PCA,axes = c(1, 2),col.var = "cos2",
+                  gradient.cols = c("#00AFBB", "#E7B800", "#FC4E07"), 
+                  repel = TRUE )+
+  theme_minimal()
+varA
+```
+
+```{r}
+varB=fviz_pca_var(res.PCA,axes = c(1, 2),col.var = "cos2",
+                  gradient.cols = c("#00AFBB", "#E7B800", "#FC4E07"), 
+                  repel = TRUE )+
+  theme_minimal()
+```
+
+```{r}
+
+varC=fviz_pca_var(res.PCA,axes = c(1, 2),col.var = "cos2",
+                  gradient.cols = c("#00AFBB", "#E7B800", "#FC4E07"), 
+                  repel = TRUE )+
+  theme_minimal()
+```
+
+```{r}
+ggarrange(varA,varB,ncol=2,legend = NULL,common.legend = TRUE)
+```
+
+```{r}
+c=fviz_dend(res.hcpc,
+            cex = 0.8,                   # Label size
+            # Color palette see ?ggpubr::ggpar
+            rect = FALSE, rect_fill = FALSE, # Add rectangle around groups
+            horiz=TRUE, # Rectangle color
+            labels_track_height = 0.5       # Augment the room for labels
+)
+c
+```
+
+```{r}
+d=fviz_cluster(res.hcpc,axes = c(1, 2),
+               repel = TRUE,           # Avoid label overlapping
+               show.clust.cent = FALSE,geom=c("point","text"), # Show cluster centers
+               # Color palette see ?ggpubr::ggpar
+               ggtheme = theme_minimal(),ellipse.type = "convex",
+               main = "Factor map"
+)
+d
+```
+
+
+```{r}
+res.hcpc
+clustdata=res.hcpc$data.clust
+```
+
+```{r}
+write.table(  clustdata,"Dataset with the cluster of the individuals.xls", row.names=TRUE, sep="\t")
+```
+
+```{r}
+quanti=res.hcpc$desc.var$quanti
+quanti$`1`
+quanti$`2`
+quanti$`3`
+```
+
+```{r}
+write.table(  quanti$`1`,"Description of the cluster 1 by the var.xls", row.names=TRUE, sep="\t")
+```
+
+```{r}
+write.table(  quanti$`2`,"Description of the cluster 2 by the var.xls", row.names=TRUE, sep="\t")
+```
+
+```{r}
+write.table(  quanti$`3`,"Description of the cluster 3 by the var.xls", row.names=TRUE, sep="\t")
+```
+
+```{r}
+res.hcpc$desc.axes$quanti
+```
+
+```{r}
+write.table(  res.hcpc$desc.axes$quanti,"Description of the clusters by the axes.xls", row.names=TRUE, sep="\t")
+```
+

@@ -1,0 +1,115 @@
+---
+title: "Rust yield ANOVA error bar"
+author: "Chinwa"
+date: "2024-06-13"
+output: html_document
+---
+####read the data
+
+```{r}
+attach(GRV)
+```
+
+```{r}
+library(ggplot2)
+library(agricolae)
+library(dplyr)
+library(patchwork)
+```
+
+```{r}
+GRV$Genotype=as.factor(GRV$Genotype)
+GRV$Rep=as.factor(GRV$Rep)
+GRV$Group=as.factor(GRV$Group)
+```
+
+```{r}
+value_max=GRV %>% group_by(Group) %>% summarize(max_value=max(Incubation))
+hsd=HSD.test(aov(Incubation~Group+Rep,data=GRV),trt="Group",group = T)
+sig.letters=hsd$groups[order(row.names(hsd$groups)),]
+```
+
+```{r}
+wakaz=ggplot(data=GRV,aes(x=Genotype,y=Incubation))+
+  geom_boxplot(aes(fill=Genotype))+
+                 geom_text(data=value_max,aes(x=Genotype,y=0.1+
+                                                            max_value,label=sig.letters$groups),vjust=0)+stat_boxplot(width=0.1)+ggtitle("")+xlab("")+ylab("Incubation")+theme_classic()+
+  theme(axis.text.x = element_text(angle = 90,size = 15))+
+  theme(axis.text.y = element_text(angle = 0,size = 15))+
+  theme(axis.title.x = element_text(size = 10))+ylim(5,20)
+```
+
+```{r}
+wakaz
+```
+
+```{r}
+attach(GRV)
+```
+
+GRV incubation period
+
+```{r}
+value_max=GRV %>% group_by(Group) %>% summarize(max_value=max(GRV$Incubation_period))
+hsd=HSD.test(aov(GRV$Incubation_period~Group+Rep,data=GRV),trt="Group",group = T)
+sig.letters=hsd$groups[order(row.names(hsd$groups)),]
+```
+
+```{r}
+waka3=ggplot(data=GRV,aes(x=Group,y=Incubation_period))+
+  geom_boxplot(aes(fill=Group))+
+                 geom_text(data=value_max,aes(x=Group,y=0.1+
+                                                            max_value,label=sig.letters$groups),vjust=0)+stat_boxplot(width=0.1)+ggtitle("")+xlab("")+ylab("Incubation period")+theme_classic()+
+  theme(axis.text.x = element_text(angle = 90,size = 15))+
+  theme(axis.text.y = element_text(angle = 0,size = 15))+
+  theme(axis.title.x = element_text(size = 10))+ylim(5,20)
+```
+
+```{r}
+waka3
+```
+
+
+
+
+
+
+
+
+```{r}
+attach(LSP)
+```
+
+```{r}
+LSP$Genotype=as.factor(LSP$Genotype)
+LSP$Rep=as.factor(LSP$Rep)
+LSP$Gropu=as.factor(LSP$Group)
+```
+
+```{r}
+value_max2=LSP %>% group_by(Group) %>% summarize(max_value2=max(Pod_yield))
+hsd=HSD.test(aov(Pod_yield~Group+Rep,data=LSP),trt="Group",group = T)
+sig.letters=hsd$groups[order(row.names(hsd$groups)),]
+```
+
+```{r}
+waka2=ggplot(data=LSP,aes(x=Group,y=Pod_yield))+
+  geom_boxplot(aes(fill=Group))+
+                 geom_text(data=value_max2,aes(x=Group,y=0.1+
+                                                            max_value2,label=sig.letters$groups),vjust=0)+stat_boxplot(width=0.1)+ggtitle("")+xlab("")+ylab("")+theme_classic()+
+  theme(axis.text.x = element_text(angle = 90,size = 15))+
+  theme(axis.text.y = element_blank())+
+  theme(axis.title.x = element_text(size = 10))+ylim(5,20)
+```
+
+```{r}
+waka2
+```
+
+```{r}
+waka+waka2+plot_layout(guides="collect")
+```
+
+```{r}
+waka+waka2 + plot_annotation(tag_levels = "A")+plot_layout(guides="collect")
+```
