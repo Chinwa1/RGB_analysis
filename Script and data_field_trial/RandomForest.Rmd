@@ -1,0 +1,172 @@
+---
+title: "R Notebook" RandomForest Model with Boruta
+output: html_notebook
+---
+
+
+```{r}
+dat=read.csv("C:/Users/hchin/OneDrive/Atlantic Beach/Documents/PhD/DPhil/DPhil/RGB for indirect selection/Field trial data final/RGB_data_final/RGB_indexes_final.csv",header = TRUE)
+```
+
+```{r}
+rm=dat[,8:19]
+```
+
+```{r}
+rm$Class=as.factor(rm$Class)
+```
+
+```{r}
+str(rm)
+```
+```{r}
+library(Boruta)
+library(randomForest)
+library(mlbench)
+library(caret)
+```
+###Feature selection
+
+```{r}
+set.seed(123)
+```
+
+```{r}
+randm=Boruta(Class~.,data = rm, doTrace=2,maxRuns=1000)
+```
+```{r}
+print(randm)
+```
+
+```{r}
+plot(randm,las=2)
+```
+```{r}
+plotImpHistory(randm)
+```
+```{r}
+randm1=TentativeRoughFix(randm)
+```
+
+```{r}
+print(randm1)
+```
+```{r}
+attStats(randm)
+```
+############Data partitioning
+```{r}
+set.seed(222)
+```
+
+```{r}
+ind=sample(2,nrow(rm),replace = T,prob=c(0.75,0.25))
+```
+
+```{r}
+training=rm[ind==1,]
+testing=rm[ind==2,]
+```
+######RANDOMFOREST CLASSIFICATION
+```{r}
+set.seed(333)
+```
+
+```{r}
+rf=randomForest(Class~.,data = training)
+```
+
+```{r}
+rf=randomForest(Class~.,data = training,ntree=120,mtry=2,
+                   importance=TRUE,
+                   proximity=TRUE)
+```
+
+```{r}
+rf
+```
+
+
+```{r}
+rf1=randomForest(Class~.,data = testing)
+```
+
+```{r}
+rf=randomForest(Score~.,data = testing,ntree=120,mtry=2,
+                   importance=TRUE,
+                   proximity=TRUE)
+```
+
+
+```{r}
+rf1
+```
+
+prediction
+```{r}
+p=predict(rf1,testing)
+```
+
+```{r}
+p
+```
+
+```{r}
+testing1=confusionMatrix(p,testing$Class)
+testing1
+```
+
+```{r}
+write.csv(testing1$table,"confusion matrix testing data.csv")
+write.csv(testing1$byClass,"confusion matrix by class for tesing data.csv")
+```
+
+```{r}
+q=predict(rf,training)
+```
+
+```{r}
+q1=confusionMatrix(q,training$Class)
+q1
+```
+```{r}
+write.csv(q1$table,"confusion matrix training data.csv")
+write.csv(q1$byClass,"confusion matrix by class for training data.csv")
+```
+
+###Error rates
+```{r}
+plot(rf1)
+```
+
+```{r}
+tuneRF(training[,-17],training[,17],
+       stepFactor = 1,plot=TRUE,
+       ntreeTry = 700,
+       trace = TRUE,
+       improve = 0.05)
+```
+
+```{r}
+varImpPlot(rf1)
+```
+
+```{r}
+importance(rf1,sort=TRUE)
+```
+
+```{r}
+varUsed(rf1)
+```
+
+```{r}
+partialPlot(rf1,training,Severity)
+```
+
+```{r}
+getTree(rf1,1,labelVar = TRUE)
+```
+
+```{r}
+MDSplot(rf1,training$Rating)
+```

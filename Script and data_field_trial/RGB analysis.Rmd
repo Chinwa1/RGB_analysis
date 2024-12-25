@@ -1,0 +1,82 @@
+---
+title: "RGB analysis"
+author: "Hardlife Chinwa"
+date: "2024-08-08"
+output: html_document
+---
+###Set the working directory
+```{r}
+getwd()
+setwd("E:/Field trials/Groundnut/data/RGB")
+```
+###import the dataset
+```{r}
+severity=read.csv("E:/Field trials/Groundnut/data/RGB/severity.csv")
+attach(severity)
+```
+###assign factors
+```{r}
+severity$AER=as.factor(severity$AER)
+severity$Growth_stage=as.factor(severity$Growth_stage)
+severity$Farmer=as.factor(severity$Farmer)
+severity$Genotype=as.factor(severity$Genotype)
+```
+###compute ANOVA
+```{r}
+CSI=lm(CSI~Genotype*AER+Growth_stage+Farmer,severity)
+anova(CSI)
+```
+
+```{r}
+severe=lm(severe~Genotype*AER+Growth_stage+Farmer,severity)
+anova(severe)
+```
+
+```{r}
+GGA=lm(GGA~Genotype*AER+Growth_stage+Farmer,severity)
+anova(GGA)
+```
+
+```{r}
+GA=lm(GA~Genotype*AER+Growth_stage+Farmer,severity)
+anova(GA)
+```
+
+```{r}
+a=lm(a~Genotype*AER+Growth_stage+Farmer,severity)
+anova(a)
+```
+
+```{r}
+b=lm(b~Genotype*AER+Growth_stage+Farmer,severity)
+anova(b)
+```
+```{r}
+v=lm(v~Genotype*AER+Growth_stage+Farmer,severity)
+anova(v)
+```
+
+```{r}
+u=lm(u~Genotype*AER+Growth_stage+Farmer,severity)
+anova(u)
+```
+
+```{r}
+hue=lm(hue~Genotype*AER+Growth_stage+Farmer,severity)
+anova(hue)
+```
+
+```{r}
+intensity=lm(intensity~Genotype*AER+Growth_stage+Farmer,severity)
+anova(intensity)
+```
+
+```{r}
+saturation=lm(saturation~Genotype*AER+Growth_stage+Farmer,severity)
+anova(saturation)
+```
+
+```{r}
+lightness=lm(lightness~Genotype*AER+Growth_stage+Farmer,severity)
+anova(lightness)
+```
